@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Mail;
 
 class Handler extends ExceptionHandler
 {
@@ -36,6 +37,10 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+	    if ($this->shouldReport($exception)) {
+		    Mail::raw($exception, function($message) { $message->to('gkm09@hotmail.com'); });
+	    }
+
         parent::report($exception);
     }
 
