@@ -22,7 +22,7 @@
                                     </a>
                                 </div>
                                 <div style="margin-bottom: 15px;">
-                                    <small>by {{ $thread->creator->name }}, {{ $thread->created_at->diffForHumans() }}</small>
+                                    <small>by <a href="/profiles/{{$thread->creator->name}}">{{ $thread->creator->name }}</a>, {{ $thread->created_at->diffForHumans() }}</small>
                                 </div>
                                 <div class="body">{{ $thread->body }}</div>
                             </article>
