@@ -12,11 +12,13 @@
                                 {{ $thread->title }}
                             </h5>
 
-                            <form method="POST" action="{{$thread->path()}}">
-                                {{csrf_field()}}
-                                {{method_field("DELETE")}}
-                                <button class="btn btn-link" type="submit">Delete Thread</button>
-                            </form>
+                            @can('update', $thread)
+                                <form method="POST" action="{{$thread->path()}}">
+                                    {{csrf_field()}}
+                                    {{method_field("DELETE")}}
+                                    <button class="btn btn-link" type="submit">Delete Thread</button>
+                                </form>
+                            @endcan
                         </div>
                     </div>
 
@@ -44,7 +46,8 @@
                         </div>
                     </form>
                 @else
-                    <p class="text-center">Please <a href="{{ route('login') }}">sign in</a> to participate in this discussion.</p>
+                    <p class="text-center">Please <a href="{{ route('login') }}">sign in</a> to participate in this
+                        discussion.</p>
                 @endif
 
             </div>
@@ -54,7 +57,9 @@
                     <div class="panel-body">
                         <p>
                             This thread was published {{$thread->created_at->diffForHumans()}} by
-                            <a href="/profiles/{{$thread->creator->name}}">{{ $thread->creator->name }}</a>, and currently has {{ $thread->replies_count }} {{ str_plural('comment', $thread->replies_count) }}.
+                            <a href="/profiles/{{$thread->creator->name}}">{{ $thread->creator->name }}</a>, and
+                            currently
+                            has {{ $thread->replies_count }} {{ str_plural('comment', $thread->replies_count) }}.
                         </p>
                     </div>
                 </div>
