@@ -28,30 +28,15 @@
                         </div>
                     </div>
 
-                    <replies :data="{{ $thread->replies }}" @removed="repliesCount--"></replies>
+                    <replies :data="{{ $thread->replies }}"
+                             @added="repliesCount++"
+                             @removed="repliesCount--"></replies>
 
                     {{--@foreach($replies as $reply)--}}
                     {{--@include('threads.reply')--}}
                     {{--@endforeach--}}
 
                     {{--{{ $replies->links() }}--}}
-
-                    @if(auth()->check())
-                        <form method="POST" action="{{$thread->path() . '/replies'}}">
-                            {{ csrf_field() }}
-
-                            <div class="form-group">
-                            <textarea class="form-control" rows="5" name="body"
-                                      placeholder="Have something to say?"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-default">Post</button>
-                            </div>
-                        </form>
-                    @else
-                        <p class="text-center">Please <a href="{{ route('login') }}">sign in</a> to participate in this
-                            discussion.</p>
-                    @endif
 
                 </div>
                 <div class="col-md-4">
