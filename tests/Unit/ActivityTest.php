@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Carbon\Carbon;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,5 +40,28 @@ class ActivityTest extends TestCase
 		$reply = create('App\Reply');
 
 		$this->assertEquals(2, Activity::count());
+	}
+
+	/** @test */
+	public function it_fetches_a_feed_for_any_user()
+	{
+		// Given we have a thread
+		$this->signIn();
+		create('App\Thread', [ 'user_id' => auth()->id()], 2);
+
+		// And another thread from a week ago
+		auth()->user()->activity()->first()->update([ 'created_at' => Carbon::now()->subWeek()]);
+
+		// When we fetch their feed.
+		$feed = Activity::feed( auth()->user(), 50 );
+
+		// Then, it should  be returned in the proper format.
+		$this->assertTrue($feed->keys()->contains(
+			Carbon::now()->format('Y-m-d')
+		));
+
+		$this->assertTrue($feed->keys()->contains(
+			Carbon::now()->subWeek()->format('Y-m-d')
+		));
 	}
 }
