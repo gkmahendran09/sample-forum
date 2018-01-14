@@ -37,17 +37,42 @@ class ParticipateInForumTest extends TestCase
     }
 
     /** @test */
-    public function a_reply_requires_a_body()
-    {
-    	$this->withExceptionHandling()->signIn();
+    public function a_reply_requires_a_body() {
+	    $this->withExceptionHandling()->signIn();
 
 	    // And an existing thread
-	    $thread = create('App\Thread');
+	    $thread = create( 'App\Thread' );
 
 	    // When the user adds a reply to the thread
-	    $reply = make('App\Reply', ['body' => null]);
-	    $this->post($thread->path() . '/replies', $reply->toArray())
-	        ->assertSessionHasErrors('body');
+	    $reply = make( 'App\Reply', [ 'body' => null ] );
+	    $this->post( $thread->path() . '/replies', $reply->toArray() )
+	         ->assertSessionHasErrors( 'body' );
 
     }
+
+    /** @test */
+    public function  unauthorized_users_can_not_delete_replies()
+    {
+    	$this->withExceptionHandling();
+
+        $reply = create('App\Reply');
+
+        $this->delete("/replies/{$reply->id}")
+            ->assertRedirect('/login');
+
+	    $this->signIn()->delete("/replies/{$reply->id}")
+	         ->assertStatus(403);
+
+    }
+    
+    /** @test */
+    public function  authorized_users_can_delete_replies()
+    {
+	    $this->signIn();
+	    $reply = create('App\Reply', [ 'user_id' => auth()->id()]);
+	    $this->delete("/replies/{$reply->id}")->assertStatus(302);
+	    $this->assertDatabaseMissing('replies', [ 'id' => $reply->id ]);
+    }
+    
+    
 }
