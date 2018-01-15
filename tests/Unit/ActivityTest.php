@@ -57,11 +57,11 @@ class ActivityTest extends TestCase
 
 		// Then, it should  be returned in the proper format.
 		$this->assertTrue($feed->keys()->contains(
-			Carbon::now()->format('Y-m-d')
+			Carbon::now()->timezone( 'Asia/Kolkata' )->format('Y-m-d')
 		));
 
 		$this->assertTrue($feed->keys()->contains(
-			Carbon::now()->subWeek()->format('Y-m-d')
+			Carbon::now()->timezone( 'Asia/Kolkata' )->subWeek()->format('Y-m-d')
 		));
 	}
 }
