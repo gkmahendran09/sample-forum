@@ -6,11 +6,11 @@ use Carbon\Carbon;
 trait LocalTime {
 
 	public function getCreatedAtAttribute( $value ) {
-		return $this->getCarbonInstanceByTimezone( $value );
+		return $this->convertToProperTimezone( $value );
 	}
 
 	public function getUpdatedAtAttribute( $value ) {
-		return $this->getCarbonInstanceByTimezone( $value );
+		return $this->convertToProperTimezone( $value );
 	}
 
 	/**
@@ -18,11 +18,11 @@ trait LocalTime {
 	 *
 	 * @return mixed
 	 */
-	protected function getCarbonInstanceByTimezone( $value ) {
+	protected function convertToProperTimezone( $value ) {
 		if(request()->wantsJson()) {
 			return Carbon::parse( $value )->timezone( 'Asia/Kolkata' )->toDateTimeString();
 		}
 
-		return Carbon::parse( Carbon::parse( $value )->timezone( 'Asia/Kolkata' )->toDateTimeString() );
+		return Carbon::parse( $value )->timezone( 'Asia/Kolkata' );
 	}
 }
