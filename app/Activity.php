@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model
 {
+	use LocalTime;
+
     protected $guarded = [];
 
     public function subject()
