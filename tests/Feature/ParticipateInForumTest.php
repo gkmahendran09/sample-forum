@@ -101,6 +101,31 @@ class ParticipateInForumTest extends TestCase
 	    $this->assertDatabaseHas('replies', [ 'id' => $reply->id, 'body' => $updatedReply ]);
     }
     
+    /** @test */
+    public function  replies_that_contain_spam_may_not_be_created()
+    {
+	    // Given we have a authenticated user
+	    $this->be($user = create('App\User'));
+
+	    // And an existing thread
+	    $thread = create('App\Thread');
+
+	    // When the user adds a reply to the thread
+	    $reply = make('App\Reply', [
+	    	'body' => 'Yahoo Customer Support'
+	    ]);
+
+	    $this->expectException(\Exception::class);
+
+	    $this->post($thread->path() . '/replies', $reply->toArray());
+
+	    // Then their reply should be visible on the page
+	    $this->assertDatabaseHas('replies', [ 'body' => $reply->body]);
+	    $this->assertEquals(1, $thread->fresh()->replies_count);
+    
+    }
+    
+    
     
     
 }

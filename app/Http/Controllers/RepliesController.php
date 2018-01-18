@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Reply;
+use App\Spam;
 use App\Thread;
 
 use Illuminate\Http\Request;
@@ -14,14 +15,29 @@ class RepliesController extends Controller
 		$this->middleware('auth')->except('index');
 	}
 
+	/**
+	 * @param $channelId
+	 * @param Thread $thread
+	 *
+	 * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+	 */
 	public function index($channelId, Thread $thread)
 	{
 		return $thread->replies()->paginate(20);
 	}
 
-	public function store($channelId, Thread $thread) {
+	/**
+	 * @param $channelId
+	 * @param Thread $thread
+	 * @param Spam $spam
+	 *
+	 * @return $this|\Illuminate\Http\RedirectResponse
+	 */
+	public function store($channelId, Thread $thread, Spam $spam) {
 
 		$this->validate(request(), ['body' => 'required']);
+
+		$spam->detect(request('body'));
 
     	$reply = $thread->addReply([
     		'body' => request('body'),
@@ -35,14 +51,26 @@ class RepliesController extends Controller
     	return back()->with('flash', 'Your reply has been left.');
     }
 
-    public function update(Reply $reply)
+	/**
+	 * @param Reply $reply
+	 *
+	 * @throws \Illuminate\Auth\Access\AuthorizationException
+	 */
+	public function update(Reply $reply)
     {
     	$this->authorize('update', $reply);
 
     	$reply->update(request(['body']));
     }
 
-    public function destroy(Reply $reply)
+	/**
+	 * @param Reply $reply
+	 *
+	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 * @throws \Exception
+	 * @throws \Illuminate\Auth\Access\AuthorizationException
+	 */
+	public function destroy(Reply $reply)
     {
 		$this->authorize('update', $reply);
 
