@@ -60878,7 +60878,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.body = '';
 
                 flash('Your reply has been posted.');
-
                 _this.$emit('created', data);
             });
         }

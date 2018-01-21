@@ -46,7 +46,8 @@ class ParticipateInForumTest extends TestCase
 	    // When the user adds a reply to the thread
 	    $reply = make( 'App\Reply', [ 'body' => null ] );
 	    $this->post( $thread->path() . '/replies', $reply->toArray() )
-	         ->assertSessionHasErrors( 'body' );
+		    ->assertStatus(422);
+//	         ->assertSessionHasErrors( 'body' );
 
     }
 
@@ -115,15 +116,31 @@ class ParticipateInForumTest extends TestCase
 	    	'body' => 'Yahoo Customer Support'
 	    ]);
 
-	    $this->expectException(\Exception::class);
-
-	    $this->post($thread->path() . '/replies', $reply->toArray());
-
-	    // Then their reply should be visible on the page
-	    $this->assertDatabaseHas('replies', [ 'body' => $reply->body]);
-	    $this->assertEquals(1, $thread->fresh()->replies_count);
+	    $this->post($thread->path() . '/replies', $reply->toArray())
+	        ->assertStatus(422);
     
     }
+    
+    /** @test */
+    public function  users_may_only_reply_a_maximum_of_once_per_minute()
+    {
+	    $this->be($user = create('App\User'));
+
+	    // And an existing thread
+	    $thread = create('App\Thread');
+
+	    // When the user adds a reply to the thread
+	    $reply = make('App\Reply', [
+		    'body' => 'My simple reply'
+	    ]);
+
+	    $this->post($thread->path() . '/replies', $reply->toArray())
+	         ->assertStatus(200);
+
+	    $this->post($thread->path() . '/replies', $reply->toArray())
+	         ->assertStatus(422);
+    }
+    
     
     
     
