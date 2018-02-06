@@ -40,7 +40,9 @@ class Reply extends Model
 
     public function wasJustPublished()
     {
-    	    return Carbon::parse($this->created_at)->gt(Carbon::now()->subMinute());
+		return false;
+			// return Carbon::parse($this->created_at)->timezone( 'Asia/Kolkata' )->gt(Carbon::now()->timezone( 'Asia/Kolkata' )->subMinute());
+			
     }
 
     public function mentionedUsers()
