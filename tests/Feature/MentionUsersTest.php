@@ -24,7 +24,7 @@ class MentionUsersTest extends TestCase
 
 		// And JohnDoe replies and mentions @JaneDoe.
 		$reply = make('App\Reply', [
-			'body' => '@JaneDoe look at this'
+			'body' => '@JaneDoe look at this out. @whodoesnotexist'
 		]);
 		$this->json('post',$thread->path() . '/replies', $reply->toArray());
 
