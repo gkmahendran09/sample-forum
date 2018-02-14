@@ -4,6 +4,7 @@
         <div class="form-group">
             <textarea class="form-control"
                       rows="5"
+                      id="body"
                       name="body"
                       placeholder="Have something to say?"
                       v-model="body"
@@ -20,6 +21,8 @@
 </div>
 </template>
 <script>
+    import "jquery.caret";
+    import "at.js";
     export default {
         data() {
             return {
@@ -30,6 +33,19 @@
             signedIn() {
                 return window.App.signedIn
             },
+        },
+        mounted() {
+            $("#body").atwho({
+                at: "@",
+                delay: 750,
+                callbacks: {
+                    remoteFilter: function(query, callback) {
+                        $.getJSON("/api/users", {name: query}, function(usernames) {
+                            callback(usernames);
+                        });
+                    }
+                }
+            });
         },
         methods: {
             addReply() {
